@@ -1,0 +1,16 @@
+New Generator.坪堑-1, bus=坪-10kV-1, baseKV=10, MVA=15, X1=0.18
+New Generator.坪堑-2, bus=坪-10kV-2, baseKV=10, MVA=15, X1=0.18
+New Generator.岳-1, bus=岳-6kV, baseKV=6, MVA=5, X1=0.14
+New Generator.岳-2, bus=岳-6kV, baseKV=6, MVA=5, X1=0.14
+
+New Line.坡西线, bus1=黄土坡变-110kV, bus2=西壤坡变-110kV, R1=0.17, X1=0.402, R0=0.51, X0=1.206, length=4, unit=km
+New Line.泉坡线, bus1=鱼泉变-110kV, bus2=黄土坡变-110kV, R1=0.21, X1=0.409, R0=0.63, X0=1.227, length=48, unit=km
+New Line.泉西线, bus1=鱼泉变-110kV, bus2=西壤坡变-110kV, R1=0.132, X1=0.394, R0=0.396, X0=1.182, length=52, unit=km
+New Line.泉岳线, bus1=鱼泉变-110kV, bus2=岳二级电厂-110kV, R1=0.132, X1=0.386, R0=0.396, X0=1.158, length=49.5, unit=km
+New Line.西堑线, bus1=坪堑电站-110kV, bus2=西壤坡变-110kV, R1=0.131, X1=0.393, R0=0.391, X0=1.173, length=51, unit=km
+
+New Transformer.堑-1变, windings=2, buses=[坪堑电站-110kV 坪-10kV-1], MVA=20, conn=[wye0 delta], XHL=11, Xn=0, baseKV=[110 10]
+New Transformer.堑-2变, windings=2, buses=[坪堑电站-110kV 坪-10kV-2], MVA=20, conn=[wye0 delta], XHL=11, Xn=0, baseKV=[110 10]
+New Transformer.岳-1变, windings=3, buses=[岳二级电厂-110kV 岳-35kV 岳-6kV], MVA=[20 20 20], conn=[wye0 wye delta], XHM=18.2, XHL=10.1, XML=6.9, Xn=0, baseKV=[110 35 6]
+
+New Source.系统, bus=黄土坡变-110kV, baseKV=110
