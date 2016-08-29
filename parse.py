@@ -5,6 +5,8 @@ import re
 from utils import param_format
 from model import Line, Bus, Generator, T2windings, T3windings, Source
 
+# 读取建模model文件
+# 将建模语句按对象类型分类
 def read_model_file(path):
     line_states = []
     generator_states = []
@@ -34,6 +36,9 @@ def read_model_file(path):
     })
 
 
+# 按声明对象的类型解析声明语句
+# 返回实例化后的对象
+# 将实例化后的结果存入model_dict方便后续建模
 def parse_models(path):
     model_dict = {'line': [],
                   'generator': [],
@@ -50,8 +55,13 @@ def parse_models(path):
         model_dict['source'].append(parse_source(s))
 
     bus_set = init_bus(model_dict)
-    return bus_set
+    return (model_dict, bus_set)
 
+# 装饰器
+# 在解析前将参数进行拆分
+# 拆分后的语言保存在param_dict中
+# 所有参数都要经过param_format函数进行类型转换
+# 数字字符串统一转换为float，字符串不变
 def split_param(fn):
     def _deco(s):
         param_str = [x.strip() for x in s.split(',')]
@@ -62,18 +72,22 @@ def split_param(fn):
         return fn(param_dict)
     return _deco
 
+# 解析电源建模语句
 @split_param
 def parse_source(source_params):
     return Source(**source_params)
 
+# 解析线路建模语句
 @split_param
 def parse_line(line_params):
     return Line(**line_params)
 
+# 解析发电机建模语句
 @split_param
 def parse_generator(generator_params):
     return Generator(**generator_params)
 
+# 解析变压器建模语句
 @split_param
 def parse_transformer(transformer_params):
     transformer_params['windings'] = int(transformer_params['windings'])
@@ -82,6 +96,12 @@ def parse_transformer(transformer_params):
     elif transformer_params['windings'] is 3:
         return T3windings(**transformer_params)
 
+# 接受完成建模后的对象字典model_dict
+# 遍历对象，实例化bus对象
+# 将母线存储在字典中，所有电路元件存储在所连母线的obj属性中
+# 母线及故障计算时的节点
+
+# 节点优化策略，从电路的外端逐渐向中心编号
 def init_bus(model_dict):
     bus_set = {}
     for i in model_dict['generator']:
@@ -106,6 +126,7 @@ def init_bus(model_dict):
 # 从line对象中提取母线
 # 因为line对象需要从两侧从中间提取，从而确定母线电压等级
 # 需要递归调用
+# 用于比算例更复杂的电网
 def init_line_bus(line_models, bus_set):
     count = 0
     for i in line_models:
@@ -128,8 +149,11 @@ def init_line_bus(line_models, bus_set):
     return
 
 
+model_path = 'test.model'
+[objs, bus_set] = parse_models(model_path)
 
 if __name__ == '__main__':
     a = parse_models('test.model')
-    for i in a:
-        print(a[i].__dict__)
+    print(a[1]['岳-35kV'].objs[0].__dict__)
+    for i in a[1]:
+        print(a[1][i].__dict__)

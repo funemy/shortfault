@@ -4,8 +4,15 @@
 import re
 from math import sqrt
 
-sparse_mtx = dict
+# 无穷大
 INF = float('inf')
+# 额定值与电压基准值的对应表
+VB_table = {
+    6: 6.3,
+    10: 10.5,
+    35: 37,
+    110: 115
+}
 
 # 格式化参数数据类型
 # 将字符串型数字转换为float
@@ -27,8 +34,13 @@ def param_format(s):
 def modulus(cplx):
     return sqrt(cplx.real ** 2 + cplx.imag ** 2)
 
-def ldu():
-    pass
+# ldu变换
+def ldu(mtx):
+    length  = len(mtx)
+    l = [{} for i in range(length)]
+    d = [{} for i in range(length)]
+    u = [{} for i in range(length)]
+    return (l, d, u)
 
 if __name__ == '__main__':
     print(param_format('haha'))
@@ -38,3 +50,4 @@ if __name__ == '__main__':
     print(modulus(1+2j))
     print(modulus(2j))
     print(modulus(2))
+    print(VB_table[6])

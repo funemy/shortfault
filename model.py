@@ -20,26 +20,35 @@ class ElectricModel(object):
         self.Y1 = 1 / self.Z1 if self.Z1 not in [0, 0j] else INF
         self.Y0 = 1 / self.Z0 if self.Z0 not in [0, 0j] else INF
 
+# 电源模型
+# 用于接入无穷大系统
 class Source(ElectricModel):
     def __init__(self, **params):
         params['R1'] = INF
-        params['X1'] = 0
         params['R0'] = INF
-        params['X0'] = 0
         super().__init__(**params)
         self.bus = params['bus']
         self.baseKV = params['baseKV']
+        self.std_Y1 = 0
 
 # 输电线路模型
 # 阻抗参数代表每公里电阻，单位欧姆
 class Line(ElectricModel):
     def __init__(self, **params):
-        super().__init__(**params)
         self.bus1 = params['bus1']
         self.bus2 = params['bus2']
         self.buses = [self.bus1, self.bus2]
         self.length = params['length']
         self.unit = params['unit']
+        self.unit_R1 = params['R1']
+        self.unit_X1 = params['X1']
+        self.unit_R0 = params['R0']
+        self.unit_X0 = params['X0']
+        params['R1'] = self.unit_R1 * self.length
+        params['X1'] = self.unit_X1 * self.length
+        params['R0'] = self.unit_R0 * self.length
+        params['X0'] = self.unit_X0 * self.length
+        super().__init__(**params)
 
 # 母线模型
 # name 母线名
@@ -85,6 +94,9 @@ class T3windings(Transformer):
         super().__init__(**params)
         self.XHM = params['XHM']
         self.XML = params['XML']
+        self.XH = 0.5 * (self.XHL + self.XHM - self.XML)
+        self.XM = 0.5 * (self.XML + self.XHM - self.XHL)
+        self.XL = 0.5 * (self.XHL + self.XML - self.XHM)
 
 if __name__ == '__main__':
     pass
