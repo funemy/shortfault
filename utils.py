@@ -4,14 +4,30 @@
 import re
 from math import sqrt
 
+# 基准功率100兆瓦
+SB = 100
+# 接地电阻值
+zf = 0
 # 无穷大
 INF = float('inf')
 # 额定值与电压基准值的对应表
+# VB_table = {
+#     6: 6.3,
+#     10: 10.5,
+#     35: 37,
+#     110: 115
+# }
+# VB_table = {
+#     6: 6,
+#     10: 10,
+#     35: 37,
+#     110: 110
+# }
 VB_table = {
-    6: 6.3,
-    10: 10.5,
-    35: 37,
-    110: 115
+    6.3: 6.3,
+    10.5: 10.5,
+    37: 37,
+    115: 115
 }
 
 # 格式化参数数据类型
@@ -34,13 +50,31 @@ def param_format(s):
 def modulus(cplx):
     return sqrt(cplx.real ** 2 + cplx.imag ** 2)
 
+def cplx_round(cplx, n):
+    if type(cplx) is complex:
+        real = round(cplx.real, n)
+        imag = round(cplx.imag, n)
+        return complex(real, imag)
+    else:
+        return round(cplx, n)
+
 # ldu变换
 def ldu(mtx):
     length  = len(mtx)
-    l = [{} for i in range(length)]
+    # l = [{i:1} for i in range(length)]
     d = [{} for i in range(length)]
-    u = [{} for i in range(length)]
-    return (l, d, u)
+    u = [{i:1} for i in range(length)]
+    for i in range(length):
+        d[i][i] = mtx[i][i] if i in mtx[i] else 0
+        for k in range(i):
+            d[i][i] -= (u[k][i] ** 2) * d[k][k]
+
+        for j in range(i+1, length):
+            u[i][j] = mtx[j][i] if i in mtx[j] else 0
+            for k in range(i):
+                u[i][j] -= u[k][i] * u[k][j] * d[k][k]
+            u[i][j] /= d[i][i]
+    return (d, u)
 
 if __name__ == '__main__':
     print(param_format('haha'))

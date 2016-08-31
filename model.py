@@ -24,12 +24,10 @@ class ElectricModel(object):
 # 用于接入无穷大系统
 class Source(ElectricModel):
     def __init__(self, **params):
-        params['R1'] = INF
-        params['R0'] = INF
         super().__init__(**params)
         self.bus = params['bus']
         self.baseKV = params['baseKV']
-        self.std_Y1 = 0
+        self.Ss = params['Ss']
 
 # 输电线路模型
 # 阻抗参数代表每公里电阻，单位欧姆
